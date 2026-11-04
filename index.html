@@ -539,18 +539,15 @@ const THEATER_ZONES = [
     name: '1층',
     rows: (() => {
       let rows = [];
-      for(let r=1; r<=21; r++) {
+      // 블루스퀘어 1층 (예: 1~24열 기준)
+      for(let r = 1; r <= 24; r++) {
         let L, C, R;
-        let cMax = (r % 2 !== 0) ? 17 : 16;
+        let cMax = (r % 2 !== 0) ? 20 : 18; // 홀/짝 열별 좌석 수 변동 고려
         
-        if(r<=3) { L = padLeft(range(1,7), 9); C = range(1, cMax); R = padRight(range(1,7), 9); }
-        else if(r===4) { L = padLeft(range(1,8), 9); C = range(1, cMax); R = padRight(range(1,8), 9); }
-        else if(r<=20) { L = range(1,9); C = range(1, cMax); R = range(1,9); }
-        else if(r===21) { L = padLeft(range(1,6), 9); C = range(1, cMax); R = padRight(range(1,7), 9); } 
-        
-        L = mapToBlock(L, 'A구역'); 
-        C = centerInBlock(mapToBlock(C, 'B구역'), 17);
-        R = mapToBlock(R, 'C구역');
+        // 좌측/중앙/우측 블록 구성을 홀수/짝수 열에 맞게 설정
+        L = mapToBlock(range(1, 8), 'A구역');
+        C = centerInBlock(mapToBlock(range(1, cMax), 'B구역'), 20);
+        R = mapToBlock(range(1, 8), 'C구역');
         
         rows.push({ id: String(r), map: [...L, 'a', ...C, 'a', ...R] });
       }
@@ -561,20 +558,12 @@ const THEATER_ZONES = [
     name: '2층',
     rows: (() => {
       let rows = [];
-      for(let r=1; r<=11; r++) {
-        let L, C, R;
-        let cMax = (r % 2 !== 0) ? 16 : 15;
-        
-        if(r<=6) { L = range(1,9); C = range(1, cMax); R = range(1,9); }
-        else if(r===7) { L = padLeft(range(1,7), 9); C = range(1, cMax); R = padRight(range(1,6), 9); }
-        else if(r===8) { L = Array(9).fill(null); C = range(1, 14); R = Array(9).fill(null); }
-        else if(r===9) { L = Array(9).fill(null); C = range(1, 13); R = Array(9).fill(null); }
-        else if(r===10) { L = Array(9).fill(null); C = range(1, 12); R = Array(9).fill(null); }
-        else if(r===11) { L = Array(9).fill(null); C = range(1, 11); R = Array(9).fill(null); }
-        
-        L = mapToBlock(L, 'A구역'); 
-        C = centerInBlock(mapToBlock(C, 'B구역'), 16);
-        R = mapToBlock(R, 'C구역');
+      // 블루스퀘어 2층 (예: 1~12열 기준)
+      for(let r = 1; r <= 12; r++) {
+        let cMax = (r % 2 !== 0) ? 18 : 16;
+        let L = mapToBlock(range(1, 6), 'A구역');
+        let C = centerInBlock(mapToBlock(range(1, cMax), 'B구역'), 18);
+        let R = mapToBlock(range(1, 6), 'C구역');
         
         rows.push({ id: String(r), map: [...L, 'a', ...C, 'a', ...R] });
       }
@@ -585,11 +574,13 @@ const THEATER_ZONES = [
     name: '3층',
     rows: (() => {
       let rows = [];
-      for(let r=1; r<=8; r++) {
-        let cMax = (r % 2 !== 0) ? 16 : 15;
-        let L = mapToBlock(range(1,9), 'A구역');
+      // 블루스퀘어 3층 (예: 1~10열 기준)
+      for(let r = 1; r <= 10; r++) {
+        let cMax = (r % 2 !== 0) ? 16 : 14;
+        let L = mapToBlock(range(1, 5), 'A구역');
         let C = centerInBlock(mapToBlock(range(1, cMax), 'B구역'), 16);
-        let R = mapToBlock(range(1,9), 'C구역');
+        let R = mapToBlock(range(1, 5), 'C구역');
+        
         rows.push({ id: String(r), map: [...L, 'a', ...C, 'a', ...R] });
       }
       return rows;
