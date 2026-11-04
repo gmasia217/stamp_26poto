@@ -534,23 +534,46 @@ function centerInBlock(arr, targetWidth) {
 }
 
 // 극장 좌석표 (블루스퀘어 대극장 기준 세팅)
+const // 극장 좌석표 (블루스퀘어 우리은행홀 실제 좌석 배치 반영)
 const THEATER_ZONES = [
   {
     name: '1층',
     rows: (() => {
       let rows = [];
-      // 블루스퀘어 1층 (예: 1~24열 기준)
-      for(let r = 1; r <= 24; r++) {
-        let L, C, R;
-        let cMax = (r % 2 !== 0) ? 20 : 18; // 홀/짝 열별 좌석 수 변동 고려
-        
-        // 좌측/중앙/우측 블록 구성을 홀수/짝수 열에 맞게 설정
-        L = mapToBlock(range(1, 8), 'A구역');
-        C = centerInBlock(mapToBlock(range(1, cMax), 'B구역'), 20);
-        R = mapToBlock(range(1, 8), 'C구역');
-        
-        rows.push({ id: String(r), map: [...L, 'a', ...C, 'a', ...R] });
-      }
+      // 1층: 총 23개 열
+      // 각 열별 좌석 번호 범위 (이미지 기준 좌측 A, 중앙 B, 우측 C 블록이 하나의 연속된 번호 체계를 가짐)
+      const rowsData = [
+        { id: 1, left: range(8,15), center: range(16,31), right: range(34,41) },
+        { id: 2, left: range(7,15), center: range(16,32), right: range(34,42) },
+        { id: 3, left: range(6,15), center: range(16,32), right: range(34,43) },
+        { id: 4, left: range(6,15), center: range(16,32), right: range(34,43) },
+        { id: 5, left: range(6,15), center: range(16,32), right: range(34,44) },
+        { id: 6, left: range(4,15), center: range(16,32), right: range(34,45) },
+        { id: 7, left: range(3,15), center: range(16,32), right: range(34,46) },
+        { id: 8, left: range(1,15), center: range(16,32), right: range(34,48) },
+        { id: 9, left: range(1,15), center: range(16,32), right: range(34,48) },
+        { id: 10, left: range(1,15), center: range(16,32), right: range(34,48) },
+        { id: 11, left: range(1,15), center: range(16,32), right: range(34,48) },
+        { id: 12, left: range(1,15), center: range(16,32), right: range(34,48) },
+        { id: 13, left: range(1,15), center: range(16,32), right: range(34,48) },
+        { id: 14, left: range(1,15), center: range(16,32), right: range(34,48) },
+        { id: 15, left: range(1,15), center: range(16,32), right: range(34,48) },
+        { id: 16, left: range(1,15), center: range(16,32), right: range(34,48) },
+        { id: 17, left: range(1,15), center: range(16,32), right: range(34,48) },
+        { id: 18, left: range(1,15), center: range(16,32), right: range(34,48) },
+        { id: 19, left: range(1,15), center: range(16,32), right: range(34,48) },
+        { id: 20, left: range(1,15), center: range(16,32), right: range(34,48) },
+        { id: 21, left: range(1,15), center: range(16,32), right: range(34,48) },
+        { id: 22, left: range(1,15), center: range(16,32), right: range(34,48) },
+        { id: 23, left: [], center: [], right: [] } // 23열은 장애인석 등 별도 구역
+      ];
+
+      rowsData.forEach(rd => {
+        let L = mapToBlock(padLeft(rd.left, 15), 'A구역');
+        let C = mapToBlock(padBoth(rd.center, 32), 'B구역');
+        let R = mapToBlock(padRight(rd.right, 15), 'C구역');
+        rows.push({ id: String(rd.id), map: [...L, 'a', ...C, 'a', ...R] });
+      });
       return rows;
     })()
   },
@@ -558,15 +581,26 @@ const THEATER_ZONES = [
     name: '2층',
     rows: (() => {
       let rows = [];
-      // 블루스퀘어 2층 (예: 1~12열 기준)
-      for(let r = 1; r <= 12; r++) {
-        let cMax = (r % 2 !== 0) ? 18 : 16;
-        let L = mapToBlock(range(1, 6), 'A구역');
-        let C = centerInBlock(mapToBlock(range(1, cMax), 'B구역'), 18);
-        let R = mapToBlock(range(1, 6), 'C구역');
-        
-        rows.push({ id: String(r), map: [...L, 'a', ...C, 'a', ...R] });
-      }
+      // 2층: 총 10개 열
+      const rowsData = [
+        { id: 1, left: range(1,15), center: range(16,31), right: range(32,46) },
+        { id: 2, left: range(1,15), center: range(16,31), right: range(32,46) },
+        { id: 3, left: range(1,15), center: range(16,31), right: range(32,46) },
+        { id: 4, left: range(1,15), center: range(16,31), right: range(32,46) },
+        { id: 5, left: range(1,15), center: range(16,31), right: range(32,46) },
+        { id: 6, left: range(3,15), center: range(16,29), right: range(32,46) },
+        { id: 7, left: range(3,15), center: range(16,28), right: range(32,44) },
+        { id: 8, left: range(3,15), center: range(16,28), right: range(32,44) },
+        { id: 9, left: range(3,15), center: range(16,28), right: range(32,44) },
+        { id: 10, left: range(1,15), center: range(16,28), right: range(32,44) }
+      ];
+
+      rowsData.forEach(rd => {
+        let L = mapToBlock(padLeft(rd.left, 15), 'A구역');
+        let C = mapToBlock(padBoth(rd.center, 16), 'B구역');
+        let R = mapToBlock(padRight(rd.right, 15), 'C구역');
+        rows.push({ id: String(rd.id), map: [...L, 'a', ...C, 'a', ...R] });
+      });
       return rows;
     })()
   },
@@ -574,15 +608,22 @@ const THEATER_ZONES = [
     name: '3층',
     rows: (() => {
       let rows = [];
-      // 블루스퀘어 3층 (예: 1~10열 기준)
-      for(let r = 1; r <= 10; r++) {
-        let cMax = (r % 2 !== 0) ? 16 : 14;
-        let L = mapToBlock(range(1, 5), 'A구역');
-        let C = centerInBlock(mapToBlock(range(1, cMax), 'B구역'), 16);
-        let R = mapToBlock(range(1, 5), 'C구역');
-        
-        rows.push({ id: String(r), map: [...L, 'a', ...C, 'a', ...R] });
-      }
+      // 3층: 총 6개 열
+      const rowsData = [
+        { id: 1, left: range(2,16), center: range(17,32), right: range(33,47) },
+        { id: 2, left: range(2,16), center: range(17,32), right: range(33,47) },
+        { id: 3, left: range(5,16), center: range(17,32), right: range(33,44) },
+        { id: 4, left: range(1,16), center: range(17,32), right: range(33,47) },
+        { id: 5, left: range(1,16), center: range(17,32), right: range(33,47) },
+        { id: 6, left: range(1,16), center: range(17,30), right: range(33,48) }
+      ];
+
+      rowsData.forEach(rd => {
+        let L = mapToBlock(padLeft(rd.left, 16), 'A구역');
+        let C = mapToBlock(padBoth(rd.center, 16), 'B구역');
+        let R = mapToBlock(padRight(rd.right, 16), 'C구역');
+        rows.push({ id: String(rd.id), map: [...L, 'a', ...C, 'a', ...R] });
+      });
       return rows;
     })()
   }
