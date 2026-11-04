@@ -1,112 +1,458 @@
 <!DOCTYPE html>
-<html lang="ko" data-theme="dark">
+<html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>막울림 · 빌리 엘리어트 더 뮤지컬 정산판</title>
-  <link rel="stylesheet" href="finale.css">
-  <!-- 이미지 저장을 위한 html2canvas 라이브러리 -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>오페라의 유령 정산 보드</title>
+    <!-- 캡처를 위한 html2canvas -->
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Noto+Serif+KR:wght@300;400;700&display=swap');
+
+        :root {
+            --bg-color: #080a11;
+            --text-main: #b0b4c0;
+            --text-highlight: #ffffff;
+            --border-color: #3a3f4e;
+            --accent-color: #5c677d;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Noto Serif KR', 'Cinzel', serif;
+        }
+
+        body {
+            background-color: #1a1a1a;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+            margin: 0;
+            color: var(--text-main);
+        }
+
+        /* 캡처 버튼 */
+        .btn-capture {
+            background: #2a2a2a;
+            color: #fff;
+            border: 1px solid #555;
+            padding: 12px 24px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            font-family: sans-serif;
+            border-radius: 4px;
+        }
+        .btn-capture:hover { background: #444; }
+
+        /* 메인 캡처 보드 영역 */
+        .board-wrapper {
+            width: 1100px;
+            background-color: var(--bg-color);
+            position: relative;
+            padding: 60px 40px;
+            /* 테두리 장식 느낌 */
+            border: 1px solid #2a2e3d;
+            box-shadow: 0 0 0 10px var(--bg-color), 0 0 0 11px #2a2e3d, 0 15px 40px rgba(0,0,0,0.8);
+        }
+
+        /* 헤더 (타이틀) */
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        .header h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 32px;
+            color: var(--text-highlight);
+            margin: 0;
+            letter-spacing: 4px;
+            font-weight: 400;
+        }
+        .header h2 {
+            font-size: 20px;
+            color: var(--text-main);
+            margin: 10px 0 0;
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+
+        /* 메인 캐스트 영역 */
+        .cast-section {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+        .role-row {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+        }
+        .role-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .role-title {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .role-title-kr { font-size: 18px; color: #a1a6b4; margin-bottom: 5px; }
+        .role-title-en { font-family: 'Cinzel', serif; font-size: 12px; color: #666e80; font-style: italic; }
+
+        .actor-list {
+            display: flex;
+            gap: 20px;
+        }
+        .actor-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 120px;
+        }
+        .actor-frame {
+            width: 100%;
+            height: 160px;
+            border: 2px solid var(--border-color);
+            padding: 4px;
+            background: #000;
+            margin-bottom: 15px;
+            position: relative;
+        }
+        /* 프레임 모서리 장식 */
+        .actor-frame::before, .actor-frame::after {
+            content: ''; position: absolute; width: 10px; height: 10px; border: 1px solid var(--border-color);
+        }
+        .actor-frame::before { top: -4px; left: -4px; border-right: none; border-bottom: none; }
+        .actor-frame::after { bottom: -4px; right: -4px; border-left: none; border-top: none; }
+
+        .actor-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(100%) contrast(1.2); /* 흑백 처리 */
+        }
+        .actor-name {
+            font-size: 14px;
+            color: var(--text-main);
+            margin-bottom: 8px;
+        }
+        .actor-count {
+            font-size: 14px;
+            color: var(--accent-color);
+        }
+        .actor-count .my-count {
+            font-size: 18px;
+            color: var(--text-highlight);
+            font-weight: bold;
+        }
+
+        /* 하단 영역 (앙상블 + 좌석) */
+        .bottom-section {
+            display: flex;
+            justify-content: space-between;
+            gap: 40px;
+        }
+
+        /* 앙상블 리스트 */
+        .ensemble-area {
+            flex: 1;
+        }
+        .group-title {
+            font-family: 'Cinzel', serif;
+            font-size: 14px;
+            color: #666e80;
+            text-align: center;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+        .ensemble-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+        .ens-img-wrap {
+            width: 100%;
+            aspect-ratio: 3/4;
+            background: #111;
+            border: 1px solid #333;
+        }
+        .ens-img {
+            width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%);
+        }
+
+        /* 좌석표 영역 */
+        .seatmap-area {
+            flex: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .stage-box {
+            width: 80%;
+            border: 1px solid var(--border-color);
+            text-align: center;
+            padding: 10px;
+            font-family: 'Cinzel', serif;
+            color: #666e80;
+            letter-spacing: 5px;
+            margin-bottom: 30px;
+        }
+
+        .floor-label {
+            font-family: sans-serif;
+            font-size: 16px;
+            color: #666e80;
+            margin: 20px 0 10px;
+        }
+        
+        /* 좌석 그리드 (가상 구현) */
+        .seats-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+        .seat-row {
+            display: flex;
+            justify-content: center;
+            gap: 4px;
+        }
+        .seat {
+            width: 8px;
+            height: 8px;
+            border: 1px solid #333;
+            border-radius: 50%;
+        }
+        .seat.viewed {
+            background-color: var(--text-highlight);
+            border-color: var(--text-highlight);
+            box-shadow: 0 0 5px rgba(255,255,255,0.8);
+        }
+
+        /* 총 관람 횟수 */
+        .total-wrapper {
+            width: 100%;
+            display: flex;
+            justify-content: flex-end;
+            align-items: flex-end;
+            margin-top: 20px;
+        }
+        .total-count {
+            font-size: 24px;
+            color: var(--accent-color);
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+        }
+        .total-count .my-total {
+            font-size: 40px;
+            color: var(--text-highlight);
+            font-weight: bold;
+        }
+
+    </style>
 </head>
 <body>
-  <div class="action-bar">
-    <button id="saveBtn">이미지로 저장하기</button>
-  </div>
 
-  <div class="capture-container">
-    <div id="capture-area">
-      <header>
-        <div class="title-block">
-          <h1><span class="curtain">♫</span> <span id="appTitle">막울림 · 빌리 엘리어트 더 뮤지컬 관극 정산판</span></h1>
-          <div class="sub">블루스퀘어 우리은행홀 · 2026.04.12 ~ 2026.07.26</div>
+    <button class="btn-capture" onclick="downloadBoard()">이미지로 저장하기</button>
+
+    <div id="capture-area" class="board-wrapper">
+        
+        <div class="header">
+            <h1>THE PHANTOM<br>OF THE OPERA</h1>
+            <h2>오페라의 유령</h2>
         </div>
-      </header>
-      
-      <main>
-        <div class="table-scroll-wrap">
-          <table id="scheduleTable">
-            <thead>
-              <tr id="scheduleHead">
-                <th>날짜</th>
-                <th>시간</th>
-                <th>좌석</th>
-                <th>빌리</th>
-                <th>마이클</th>
-                <th>스몰보이</th>
-                <th>Mrs. 윌킨슨</th>
-                <th>아빠</th>
-              </tr>
-            </thead>
-            <tbody id="scheduleBody">
-              <tr>
-                <td class="date-cell" style="color:#e0594a">26/04/12 (일)</td>
-                <td class="time-cell" style="color:#e0594a">19:00</td>
-                <td class="seat-cell">1층-1열-1번</td>
-                <td class="cast-cell win" style="color:#caa15a; font-weight:bold;">김승주</td>
-                <td class="cast-cell">이서준</td>
-                <td class="cast-cell">유지원</td>
-                <td class="cast-cell">최정원</td>
-                <td class="cast-cell">조정근</td>
-              </tr>
-              <tr>
-                <td class="date-cell">26/04/14 (화)</td>
-                <td class="time-cell">19:30</td>
-                <td class="seat-cell">1층-5열-10번</td>
-                <td class="cast-cell win" style="color:#caa15a; font-weight:bold;">조윤우</td>
-                <td class="cast-cell">지윤호</td>
-                <td class="cast-cell">고이안</td>
-                <td class="cast-cell">전수미</td>
-                <td class="cast-cell">최동원</td>
-              </tr>
-              <tr>
-                <td class="date-cell">26/04/15 (수)</td>
-                <td class="time-cell">19:30</td>
-                <td class="seat-cell">2층-1열-15번</td>
-                <td class="cast-cell win" style="color:#caa15a; font-weight:bold;">박지후</td>
-                <td class="cast-cell">이루리</td>
-                <td class="cast-cell">허지훈</td>
-                <td class="cast-cell">최정원</td>
-                <td class="cast-cell">조정근</td>
-              </tr>
-              <tr>
-                <td class="date-cell">26/04/16 (목)</td>
-                <td class="time-cell">19:30</td>
-                <td class="seat-cell">1층-3열-22번</td>
-                <td class="cast-cell win" style="color:#caa15a; font-weight:bold;">조윤우</td>
-                <td class="cast-cell">이서준</td>
-                <td class="cast-cell">유지원</td>
-                <td class="cast-cell">전수미</td>
-                <td class="cast-cell">조정근</td>
-              </tr>
-              <tr>
-                <td class="date-cell">26/04/17 (금)</td>
-                <td class="time-cell">19:30</td>
-                <td class="seat-cell">1층-10열-5번</td>
-                <td class="cast-cell win" style="color:#caa15a; font-weight:bold;">김승주</td>
-                <td class="cast-cell">김효빈</td>
-                <td class="cast-cell">고이안</td>
-                <td class="cast-cell">최정원</td>
-                <td class="cast-cell">최동원</td>
-              </tr>
-              <tr>
-                <td class="date-cell" style="color:#5b8fd6">26/04/18 (토)</td>
-                <td class="time-cell" style="color:#5b8fd6">14:00</td>
-                <td class="seat-cell">1층-7열-12번</td>
-                <td class="cast-cell win" style="color:#caa15a; font-weight:bold;">조윤우</td>
-                <td class="cast-cell">지윤호</td>
-                <td class="cast-cell">허지훈</td>
-                <td class="cast-cell">전수미</td>
-                <td class="cast-cell">조정근</td>
-              </tr>
-            </tbody>
-          </table>
+
+        <div class="cast-section">
+            <!-- 첫 번째 줄 (유령, 크리스틴, 라울) -->
+            <div class="role-row">
+                <div class="role-group">
+                    <div class="role-title">
+                        <div class="role-title-kr">오페라의 유령</div>
+                        <div class="role-title-en">The Phantom of the Opera</div>
+                    </div>
+                    <div class="actor-list">
+                        <div class="actor-item">
+                            <div class="actor-frame"><img src="assets/phantom1.jpg" class="actor-img" onerror="this.style.display='none'"></div>
+                            <div class="actor-name">조승우</div>
+                            <div class="actor-count"><span class="my-count" id="c_cho">0</span> / 20</div>
+                        </div>
+                        <div class="actor-item">
+                            <div class="actor-frame"><img src="assets/phantom2.jpg" class="actor-img" onerror="this.style.display='none'"></div>
+                            <div class="actor-name">최재림</div>
+                            <div class="actor-count"><span class="my-count" id="c_choi">0</span> / 18</div>
+                        </div>
+                        <div class="actor-item">
+                            <div class="actor-frame"><img src="assets/phantom3.jpg" class="actor-img" onerror="this.style.display='none'"></div>
+                            <div class="actor-name">김주택</div>
+                            <div class="actor-count"><span class="my-count" id="c_kim">0</span> / 20</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="role-group">
+                    <div class="role-title">
+                        <div class="role-title-kr">크리스틴</div>
+                        <div class="role-title-en">Christine Daaé</div>
+                    </div>
+                    <div class="actor-list">
+                        <div class="actor-item">
+                            <div class="actor-frame"><img src="assets/chris1.jpg" class="actor-img" onerror="this.style.display='none'"></div>
+                            <div class="actor-name">손지수</div>
+                            <div class="actor-count"><span class="my-count" id="c_son">0</span> / 29</div>
+                        </div>
+                        <div class="actor-item">
+                            <div class="actor-frame"><img src="assets/chris2.jpg" class="actor-img" onerror="this.style.display='none'"></div>
+                            <div class="actor-name">송은혜</div>
+                            <div class="actor-count"><span class="my-count" id="c_song">0</span> / 29</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="role-group">
+                    <div class="role-title">
+                        <div class="role-title-kr">라울</div>
+                        <div class="role-title-en">Raoul, Vicomte de Chagny</div>
+                    </div>
+                    <div class="actor-list">
+                        <!-- 라울 배우 추가 (동일한 구조 복사) -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 두 번째 줄 (조연진) - 구조 동일하므로 축약 -->
         </div>
-        <div class="summary-footer">
-          <p>총 관람 횟수: <strong>6회</strong></p>
+
+        <div class="bottom-section">
+            <!-- 좌측: 앙상블 -->
+            <div class="ensemble-area">
+                <div class="group-title">ENSEMBLE</div>
+                <div class="ensemble-grid" id="ensembleGrid">
+                    <!-- JS로 앙상블 이미지 박스 생성 -->
+                </div>
+
+                <div class="group-title">DANCER</div>
+                <div class="ensemble-grid" id="dancerGrid"></div>
+
+                <div class="group-title">SWING</div>
+                <div class="ensemble-grid" id="swingGrid"></div>
+            </div>
+
+            <!-- 우측: 좌석표 및 총 정산 -->
+            <div class="seatmap-area">
+                <div class="stage-box">STAGE</div>
+                
+                <div class="seats-container" id="seatMap1F"></div>
+                <div class="floor-label">2F</div>
+                <div class="seats-container" id="seatMap2F"></div>
+                <div class="floor-label">3F</div>
+                <div class="seats-container" id="seatMap3F"></div>
+
+                <div class="total-wrapper">
+                    <div class="total-count">
+                        <span class="my-total" id="total_views">0</span> / 58
+                    </div>
+                </div>
+            </div>
         </div>
-      </main>
+
     </div>
-  </div>
-  <script src="finale.js"></script>
+
+    <script>
+        // ==========================================
+        // 1. 사이트 DB에서 받아온 가상 데이터
+        // ==========================================
+        const dbData = {
+            total_views: 2,
+            actor_counts: {
+                c_cho: 2, // 조승우 2회
+                c_choi: 0,
+                c_kim: 0,
+                c_son: 2, // 손지수 2회
+                c_song: 0
+            },
+            // 관람한 좌석의 좌표 또는 인덱스 (예시: 1층 5열 10번 등)
+            // 여기서는 단순 인덱스 배열로 처리
+            viewed_seats: [45, 120] 
+        };
+
+        // ==========================================
+        // 2. 캐스트 관람 횟수 매핑
+        // ==========================================
+        for (const [id, count] of Object.entries(dbData.actor_counts)) {
+            const el = document.getElementById(id);
+            if (el) el.innerText = count > 0 ? count : ''; // 0이면 빈칸, 아니면 숫자 표시
+        }
+        document.getElementById('total_views').innerText = dbData.total_views;
+
+        // ==========================================
+        // 3. 더미 좌석표 생성 (Read-Only)
+        // ==========================================
+        function createSeatGrid(containerId, rows, colsPerRow, startIdx) {
+            const container = document.getElementById(containerId);
+            let currentIdx = startIdx;
+            
+            for (let r = 0; r < rows; r++) {
+                const rowDiv = document.createElement('div');
+                rowDiv.className = 'seat-row';
+                for (let c = 0; c < colsPerRow; c++) {
+                    const seatDiv = document.createElement('div');
+                    seatDiv.className = 'seat';
+                    // 관람한 좌석 점등
+                    if (dbData.viewed_seats.includes(currentIdx)) {
+                        seatDiv.classList.add('viewed');
+                    }
+                    rowDiv.appendChild(seatDiv);
+                    currentIdx++;
+                }
+                container.appendChild(rowDiv);
+            }
+            return currentIdx;
+        }
+
+        // 이미지에 맞춰 좌석 대략적 생성 (1층 15줄, 2층 8줄, 3층 6줄)
+        let idx = 0;
+        idx = createSeatGrid('seatMap1F', 15, 30, idx);
+        idx = createSeatGrid('seatMap2F', 8, 30, idx);
+        idx = createSeatGrid('seatMap3F', 6, 30, idx);
+
+        // ==========================================
+        // 4. 앙상블 더미 박스 생성
+        // ==========================================
+        function createEnsembles(containerId, count) {
+            const container = document.getElementById(containerId);
+            for(let i=0; i<count; i++) {
+                const div = document.createElement('div');
+                div.className = 'ens-img-wrap';
+                container.appendChild(div);
+            }
+        }
+        createEnsembles('ensembleGrid', 15);
+        createEnsembles('dancerGrid', 8);
+        createEnsembles('swingGrid', 4);
+
+        // ==========================================
+        // 5. 이미지 캡처 (다운로드)
+        // ==========================================
+        function downloadBoard() {
+            const board = document.getElementById('capture-area');
+            html2canvas(board, {
+                scale: 2, 
+                backgroundColor: "#080a11",
+                useCORS: true 
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'Phantom_Journey.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+        }
+    </script>
 </body>
 </html>
